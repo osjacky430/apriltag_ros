@@ -49,19 +49,16 @@
 
 #include <nodelet/nodelet.h>
 
-namespace apriltag_ros
-{
+namespace apriltag_ros {
 
-class ContinuousDetector: public nodelet::Nodelet
-{
+class ContinuousDetector : public nodelet::Nodelet {
  public:
-  ContinuousDetector() = default;
+  ContinuousDetector()  = default;
   ~ContinuousDetector() = default;
 
   void onInit();
 
-  void imageCallback(const sensor_msgs::ImageConstPtr& image_rect,
-                     const sensor_msgs::CameraInfoConstPtr& camera_info);
+  void imageCallback(const sensor_msgs::ImageConstPtr& image_rect, const sensor_msgs::CameraInfoConstPtr& camera_info);
 
  private:
   std::shared_ptr<TagDetector> tag_detector_;
@@ -74,6 +71,6 @@ class ContinuousDetector: public nodelet::Nodelet
   ros::Publisher tag_detections_publisher_;
 };
 
-} // namespace apriltag_ros
+}  // namespace apriltag_ros
 
-#endif // APRILTAG_ROS_CONTINUOUS_DETECTOR_H
+#endif  // APRILTAG_ROS_CONTINUOUS_DETECTOR_H

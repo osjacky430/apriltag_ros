@@ -27,43 +27,38 @@
  * those of the authors and should not be interpreted as representing official
  * policies, either expressed or implied, of the California Institute of
  * Technology.
- *
- ** single_image_detector.h ****************************************************
- *
- * Wrapper class of TagDetector class which calls TagDetector::detectTags on a
- * an image stored at a specified load path and stores the output at a specified
- * save path.
- *
- * $Revision: 1.0 $
- * $Date: 2017/12/17 13:33:40 $
- * $Author: dmalyuta $
- *
- * Originator:        Danylo Malyuta, JPL
- ******************************************************************************/
+ */
 
-#ifndef APRILTAG_ROS_SINGLE_IMAGE_DETECTOR_H
-#define APRILTAG_ROS_SINGLE_IMAGE_DETECTOR_H
+#include <ros/ros.h>
 
-#include "apriltag_ros/common_functions.h"
-#include <apriltag_ros/AnalyzeSingleImage.h>
+#if ENABLE_PROFILING
 
-namespace apriltag_ros {
+#include <gperftools/profiler.h>
 
-class SingleImageDetector {
- private:
-  TagDetector tag_detector_;
-  ros::ServiceServer single_image_analysis_service_;
+struct ProfilerWrapper {
+  explicit ProfilerWrapper(char const* const t_filename) { ProfilerStart(t_filename); }
 
-  ros::Publisher tag_detections_publisher_;
-
- public:
-  SingleImageDetector(ros::NodeHandle& nh, ros::NodeHandle& pnh);
-
-  // The function which provides the single image analysis service
-  bool analyzeImage(apriltag_ros::AnalyzeSingleImage::Request& request,
-                    apriltag_ros::AnalyzeSingleImage::Response& response);
+  ~ProfilerWrapper() { ProfilerStop(); }
 };
 
-}  // namespace apriltag_ros
+#endif
 
-#endif  // APRILTAG_ROS_SINGLE_IMAGE_DETECTOR_H
+#include <nodelet/loader.h>
+
+int main(int argc, char** argv) {
+  ros::init(argc, argv, "apriltag_ros");
+
+  nodelet::Loader nodelet;
+  nodelet::M_string const& remap(ros::names::getRemappings());
+  nodelet::V_string nargv;
+
+#if ENABLE_PROFILING
+  ProfilerWrapper profiler{PROF_FILE_PATH};
+#endif
+
+  nodelet.load(ros::this_node::getName(), "apriltag_ros/ContinuousDetector", remap, nargv);
+
+  ros::spin();
+
+  return 0;
+}

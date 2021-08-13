@@ -32,14 +32,13 @@
 #include "apriltag_ros/common_functions.h"
 #include "apriltag_ros/single_image_detector.h"
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   ros::init(argc, argv, "apriltag_ros_single_image_server");
 
   ros::NodeHandle nh;
   ros::NodeHandle pnh("~");
 
   apriltag_ros::SingleImageDetector continuous_tag_detector(nh, pnh);
-  
+
   ros::spin();
 }
